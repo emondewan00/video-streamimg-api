@@ -1,45 +1,50 @@
 const mongoose = require("mongoose");
 
-const movieSchema = new mongoose.Schema({
+const videoSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Name is required field"],
-
     trim: true,
+  },
+  video: {
+    type: String,
+    default: "https://youtu.be/yVYQeDhAQWk?si=yfIgXe3uNHkRzkq0",
+    // required: true,
+  },
+  category: {
+    type: String,
+    required: true,
   },
   description: {
     type: String,
-    required: [true, "Description is required field"],
+    default:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero quaerat eveniet aliquid porro vitae molestiae nostrum provident reiciendis cum esse?",
+    // required: [true, "Description is required field"],
   },
-  imdbRatings: {
-    type: Number,
-    default: 1.0,
-    min: [1, "Ratings must be getar then 1"],
-    max: [10, "Ratings must be lass then 10"],
-  },
-  language: {
+  thumbnail: {
     type: String,
-    required: [true, "Language is require"],
+    required: [true, "Thumbnail is required field "],
   },
-  releaseYear: {
-    type: Number,
-    required: [true, "Release Year is required field"],
-  },
-  genres: {
-    type: [String],
-    required: [true, "Genres is required field"],
-  },
-  directors: {
-    type: [String],
-    required: [true, "Directors is required field"],
-  },
-  coverImage: {
+  showInBanner: {
     type: String,
-    required: [true, "Cover image is required field "],
+    default: "hide",
   },
-  actors: {
+  visibility: {
+    type: String,
+    default: "visible",
+  },
+  publicIn: {
+    type: Date,
+    default: Date.now,
+  },
+  views: {
+    type: Number,
+    default: 0,
+  },
+  tags: {
     type: [String],
-    required: [true, "Actors is required field"],
+    required: true,
+    lowercase: true,
   },
   createdAt: {
     type: Date,
@@ -47,5 +52,11 @@ const movieSchema = new mongoose.Schema({
   },
 });
 
-const Movie = mongoose.model("Movies", movieSchema);
-module.exports = Movie;
+// videoSchema.index({ title: "text", tags: "text" });
+
+// videoSchema.pre("find", function () {
+//   this.find({ publicIn: { $lte: Date.now() } });
+// });
+
+const Video = mongoose.model("Videos", videoSchema);
+module.exports = Video;

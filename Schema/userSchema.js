@@ -1,28 +1,51 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  name: {
+  userName: {
+    type: String,
+    lowercase: true,
+    trim: true,
+    required: true,
+    unique: true,
+  },
+  displayName: {
     type: String,
     required: [true, "Name is a required"],
   },
   email: {
     type: String,
     required: [true, "Email is a required"],
+    unique: true,
   },
-  image: String,
-  password: {
+  photoUrl: String,
+  comments: {
+    type: Number,
+    default: 0,
+  },
+  role: {
     type: String,
-    required: [true, "This is a required"],
+    default: "Active",
+    require: true,
   },
-  uniqueId: {
+  status: {
     type: String,
-    required: true,
+    default: "Active",
+    enum: {
+      values: ["Active", "Banned"],
+      message: "{VALUE} is not supported",
+    },
   },
-  image: String,
-  createAt: {
+  createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
+});
+
+// userSchema.index({ displayName: "text" });
+
+userSchema.pre("save", function (next) {
+  this.role = "user";
+  next();
 });
 
 const User = mongoose.model("Users", userSchema);

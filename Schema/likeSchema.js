@@ -1,19 +1,22 @@
 const mongoose = require("mongoose");
 
-const likeSchema = new mongoose.model({
-  userId: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-    required: [true, "User Id require"],
-  },
+const likeSchema = new mongoose.Schema({
   videoId: {
     type: mongoose.Types.ObjectId,
     ref: "Movie",
     required: [true, "Video id require"],
   },
+  email: {
+    type: String,
+    required: true,
+  },
+  isLike: {
+    type: Boolean,
+    default: true,
+  },
   createAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 
