@@ -1,10 +1,22 @@
 const express = require("express");
+const { Server } = require("socket.io");
 const Like = require("../Schema/likeSchema");
 const ReactionVideos = require("../utils/aggregateVideo");
 const router = express.Router();
 
+const io = new Server(3000);
+
+io.engine.on("connection", (rawSocket) => {
+  // if you need the certificate details (it is no longer available once the handshake is completed)
+  rawSocket.peerCertificate = rawSocket.request.client.getPeerCertificate();
+});
+
+io.on("connection", (socket) => {
+  console.log(socket.conn.peerCertificate);
+});
+
 //get likes videos
-router.get("/", async (req, res) => {
+router.get("/ib", async (req, res) => {
   try {
     const limit = req.query.limit ? { $limit: req.query.limit } : {};
     console.log(limit);
@@ -24,11 +36,20 @@ router.get("/", async (req, res) => {
   }
 });
 
-//post like
-router.post("/", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    console.log(req.body, "like");
-    const result = await Like.create(req.body);
+    const result = await Like.find();
+    res.send(result);
+  } catch (error) {}
+});
+
+//post like
+router.patch("/", async (req, res) => {
+  try {
+    const videoId = req.body.videoId;
+    const result = await Like.updateOne({ videoId }, req.body, {
+      upsert: true,
+    });
     res.status(201).json({
       status: "success",
       data: {

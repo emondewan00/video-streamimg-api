@@ -1,7 +1,7 @@
 class ApiFeatures {
   constructor(
     query,
-    { _order, _sort, fields, page, limit, limitdocument, ...filterFields }
+    { _order, _sort, fields, page, limit, limitdocument, text, ...filterFields }
   ) {
     this.query = query;
     this._order = _order;
@@ -11,6 +11,7 @@ class ApiFeatures {
     this.limit = limit;
     this.filterFields = filterFields;
     this.limitdocument = limitdocument;
+    this.text = text;
   }
 
   filter() {
@@ -58,6 +59,14 @@ class ApiFeatures {
         sortObj[x] = sortValue;
       }
       this.query = this.query.sort(sortObj);
+    }
+    return this;
+  }
+  textSearch() {
+    if (this.text) {
+      this.query = this.query.find({
+        $text: { $search: this.text },
+      });
     }
     return this;
   }

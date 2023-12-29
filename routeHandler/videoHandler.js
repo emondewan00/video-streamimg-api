@@ -11,13 +11,14 @@ router.get("/", async (req, res) => {
   try {
     const category = req.query.category ? { category: req.query.category } : {};
     const videoCount = await Video.find(category).count();
-
+    
     const allVideos = new ApiFeatures(Video.find(), req.query)
       .pagination(videoCount)
       .limitFields()
       .sort()
       .filter()
-      .getNumberOfDocument();
+      .getNumberOfDocument()
+      .textSearch();
 
     const videos = await allVideos.query;
     res.status(200).json({

@@ -12,7 +12,7 @@ const likeSchema = new mongoose.Schema({
   },
   isLike: {
     type: Boolean,
-    default: true,
+    enum: [true, false, null],
   },
   createAt: {
     type: Date,
