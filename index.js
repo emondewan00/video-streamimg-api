@@ -21,7 +21,13 @@ const io = new Server(httpServer, {
 });
 
 app.use(express.json());
-app.use(cors());
+const corsConfig = {
+  origin: "",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.use(cors(corsConfig));
+app.options("", cors(corsConfig));
 
 io.on("connection", (socket) => {
   // Handle custom events here
