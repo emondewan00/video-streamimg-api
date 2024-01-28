@@ -12,13 +12,13 @@ const Statics = require("./routeHandler/statics");
 const LikedVideos = require("./routeHandler/likeHandler");
 const port = process.env.PORT || 5000;
 
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3001", // Adjust this to your client-side origin
-    methods: ["GET", "POST"],
-  },
-});
+// const httpServer = createServer(app);
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "http://localhost:3001", // Adjust this to your client-side origin
+//     methods: ["GET", "POST"],
+//   },
+// });
 
 app.use(express.json());
 const corsConfig = {
@@ -26,24 +26,24 @@ const corsConfig = {
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
-app.use(cors(corsConfig));
-app.options("", cors(corsConfig));
+app.use(cors());
+// app.options("", cors(corsConfig));
 
-io.on("connection", (socket) => {
-  // Handle custom events here
+// io.on("connection", (socket) => {
+//   // Handle custom events here
 
-  socket.emit("hello", "hello test");
+//   socket.emit("hello", "hello test");
 
-  // Disconnect event
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-});
+//   // Disconnect event
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected");
+//   });
+// });
 
-const count = io.engine.clientsCount;
+// const count = io.engine.clientsCount;
 // may or may not be similar to the count of Socket instances in the main namespace, depending on your usage
-const count2 = io.of("/").sockets.size;
-console.log(count2);
+// const count2 = io.of("/").sockets.size;
+// console.log(count2);
 
 mongoose
   .connect(process.env.CON_STR)
@@ -61,6 +61,7 @@ app.get("/", (req, res) => {
   res.send("hello");
 });
 
-httpServer.listen(port, () => {
-  console.log("server start ");
-});
+app.listen(5000, () => console.log("listening on port"));
+// httpServer.listen(port, () => {
+//   console.log("server start ");
+// });

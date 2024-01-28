@@ -4,16 +4,16 @@ const Like = require("../Schema/likeSchema");
 const ReactionVideos = require("../utils/aggregateVideo");
 const router = express.Router();
 
-const io = new Server(3000);
+// const io = new Server(3000);
 
-io.engine.on("connection", (rawSocket) => {
-  // if you need the certificate details (it is no longer available once the handshake is completed)
-  rawSocket.peerCertificate = rawSocket.request.client.getPeerCertificate();
-});
+// io.engine.on("connection", (rawSocket) => {
+//   // if you need the certificate details (it is no longer available once the handshake is completed)
+//   rawSocket.peerCertificate = rawSocket.request.client.getPeerCertificate();
+// });
 
-io.on("connection", (socket) => {
-  console.log(socket.conn.peerCertificate);
-});
+// io.on("connection", (socket) => {
+//   console.log(socket.conn.peerCertificate);
+// });
 
 //get likes videos
 router.get("/ib", async (req, res) => {
