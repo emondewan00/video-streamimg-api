@@ -2,6 +2,7 @@ const express = require("express");
 const History = require("../Schema/historySchema");
 const ReactionVideos = require("../utils/aggregateVideo");
 const Video = require("../Schema/videoSchema");
+const { default: mongoose } = require("mongoose");
 const router = express.Router();
 
 //get history
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
 
     const query = new ReactionVideos(History);
     const videos = await query.getHistorysLikesWatchLaterVideos(email, limit);
-    
+
     res.status(200).json({
       status: "success",
       length: videos.length,
@@ -60,6 +61,32 @@ router.post("/", async (req, res) => {
       },
     });
   }
+});
+
+router.delete("/transaction", async (req, res) => {
+  try {
+    const _id = req.body._id;
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      try {
+        const result = await History.deleteOne({ _id });
+        res.status(200).json({
+          status: "Success",
+          data: {
+            result,
+          },
+        });
+      } catch (error) {
+        await session.abortTransaction();
+        res.status(400).json({
+          status: "fail",
+          data: {
+            result: error.message,
+          },
+        });
+      }
+    });
+  } catch (error) {}
 });
 
 //delete history

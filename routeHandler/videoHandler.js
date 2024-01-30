@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
   try {
     const category = req.query.category ? { category: req.query.category } : {};
     const videoCount = await Video.find(category).count();
-    
+
     const allVideos = new ApiFeatures(Video.find(), req.query)
       .pagination(videoCount)
       .limitFields()
@@ -140,22 +140,32 @@ router.patch("/edit/:id", async (req, res) => {
 //delete a video
 router.delete("/delete/:id", async (req, res) => {
   try {
-    const _id = req.params.id;
-    const session = await Video.startSession();
+    const _id = req.params.id; //get video id form user
+    const session = await Video.startSession(); //start session
+    //start transaction
     await session.withTransaction(async () => {
+      //delete video scope from video collection
       try {
-        const result = await Video.deleteOne({ _id });
-        const deleteformHistory = await History.deleteMany({ videoId: _id });
-        console.log(deleteformHistory, "hello 149 line");
+        const result = await Video.deleteOne({ _id }); //delete video from video collection
+        await History.deleteMany({ videoId: _id }); //delete video from history
         res.status(200).json({
           status: "Success",
           data: {
             result,
           },
         });
-      } catch (error) {}
+      } catch (error) {
+        await session.abortTransaction(); //abort transaction
+        res.status(400).json({
+          status: "fail",
+          data: {
+            result: error.message,
+          },
+        });
+      }
+      await session.commitTransaction(); //commit transaction
     });
-    await session.endSession();
+    await session.endSession(); //end session
   } catch (error) {
     res.send(error);
   }
